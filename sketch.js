@@ -1,51 +1,155 @@
+natureValues = {
+    "positive" : 1.1,
+    "neutral" : 1,
+    "negative" : 0.9
+}
+
+typeValues = {
+    "super" : 2,
+    "normal" : 1,
+    "weak" : 0.5
+}
+
+// calculate hp total based on base stat, evs, ivs, and level
 function HPStatCalc(base, iv, ev, level)
 {
     calc1 = (2 * base + iv + Math.floor(ev/4)) * level;
     return Math.floor(calc1/100) + level + 10;
 }
 
+// calculate stat based on base stat, evs, ivs, level, and nature
 function StatCalc(base, iv, ev, level, nature)
 {
     calc1 = (2 * base + iv + Math.floor(ev/4)) * level;
     return Math.floor((Math.floor(calc1/100) + 5) * nature);
 }
 
+// calculate damage based on level, base power, atk/def stats, and other multipliers
 function DamageCalc(level, power, atk, def, stab, type, other)
 {
     calc1 = ((((2 * level)/5) + 2) * power * (atk/def))/50 + 2
     return Math.floor(calc1 * stab * type * other);
 }
 
-remainingEVs = 336;
-damages = []
-
-for (i = 0; i < remainingEVs; i++)
+// the function that is called when the button is pressed
+function CalcLowest()
 {
-    HP_EV = Math.min(252, i);
-    DEF_EV = Math.min(252, remainingEVs - i);
-    //console.log(HP_EV, DEF_EV);
+    // target div
+    targetLevel   = parseInt(document.getElementById("targetLevel").value);
+    targetBaseHP  = parseInt(document.getElementById("targetBaseHP").value);
+    targetHPIV    = parseInt(document.getElementById("targetHPIV").value);
+    targetBaseDef = parseInt(document.getElementById("targetBaseDef").value);
+    targetDefIV   = parseInt(document.getElementById("targetDefIV").value);
+    remainingEVs  = parseInt(document.getElementById("remainingEVs").value);
+    targetNature  = document.getElementById("targetNature").value;
 
-    damages.push(DamageCalc(100, 110, 
-        StatCalc(92, 31, 252, 100, 1.1), 
-        StatCalc(80, 31, DEF_EV, 100, 1), 1.5, 2, 1)/
-        HPStatCalc(114, 31, HP_EV, 100));
-}
+    // attacker div
+    attackLevel   = parseInt(document.getElementById("attackLevel").value);
+    attackBaseAtk = parseInt(document.getElementById("attackBaseAtk").value);
+    attackAtkIV   = parseInt(document.getElementById("attackAtkIV").value);
+    attackAtkEV   = parseInt(document.getElementById("attackAtkEV").value);
+    attackNature  = document.getElementById("attackNature").value;
 
-lowest = 1000;
-lowestIndex = -1;
+    // move div
+    movePower     = parseInt(document.getElementById("movePower").value);
+    STAB          = document.getElementById("STAB").checked;
+    typeEffective = document.getElementById("typeEffective").value;
+    otherMult     = parseInt(document.getElementById("otherMult").value);
 
-for (i = 0; i < damages.length; i++)
-{
-    if (damages[i] < lowest)
+    // handling misc attributes
+    targetNature = natureValues[targetNature];
+    attackNature = natureValues[attackNature];
+    STAB = (STAB ? 1.5 : 1);
+    typeEffective = typeValues[typeEffective];
+
+    if (errorValues())
     {
-        lowest = damages[i];
-        lowestIndex = i;
+        document.getElementById("result").style.visibility = "visible";
+        return;
     }
+
+    damages = []
+
+    // loop through and calculate each combination of evs
+    for (i = 0; i < remainingEVs; i++)
+    {
+        HP_EV = Math.min(252, i);
+        DEF_EV = Math.min(252, remainingEVs - i);
+
+        damages.push(DamageCalc(attackLevel, movePower, 
+            StatCalc(attackBaseAtk, attackAtkIV, attackAtkEV, attackLevel, 1.1), 
+            StatCalc(targetBaseDef, targetDefIV, DEF_EV, targetLevel, 1), 
+            STAB, typeEffective, otherMult)/
+            HPStatCalc(targetBaseHP, targetHPIV, HP_EV, targetLevel));
+    }
+
+    lowest = 1000;
+    lowestIndex = -1;
+
+    // find the smallest amount of damage
+    for (i = 0; i < damages.length; i++)
+    {
+        if (damages[i] < lowest)
+        {
+            lowest = damages[i];
+            lowestIndex = i;
+        }
+    }
+    lowest = lowest.toFixed(3) * 100;
+
+    console.log(lowest, lowestIndex);
+    document.getElementById("result").innerHTML =
+    "In order to take a minimum high roll of " + lowest.toString() + 
+    "%, you would need to invest " + lowestIndex.toString() +
+    " EV's into HP, and " + (remainingEVs-lowestIndex).toString() +
+    " EV's into Defense / Special Defense."
+    document.getElementById("result").style.visibility = "visible";
 }
-lowest = lowest.toFixed(3);
 
-//console.log(damages);
-console.log(lowest, lowestIndex);
+// function for checking if inputted numbers are correct
+function errorValues()
+{
+    values = [
+        targetLevel,
+        targetBaseHP,
+        targetHPIV,
+        targetBaseDef,
+        targetDefIV,
+        remainingEVs,
+        targetNature,
 
+        attackLevel,
+        attackBaseAtk,
+        attackAtkIV,
+        attackAtkEV,
+        attackNature,
+
+        movePower,
+        STAB,
+        typeEffective,
+        otherMult,
+    ]
+    
+    for (i = 0; i < values.length; i++)
+    {
+        if (![6, 11, 13, 14].includes(i)) // if the current index is a number
+        {
+            if (isNaN(values[i])) // if parsing the value
+            {
+                return true;
+            } 
+        }
+    }
+    return false;
+}
+
+// function for adjusting the input fields
+function limitValue(input)
+{
+    const minValue = parseInt(input.min);
+    const roundedValue = Math.round(input.value);
+    const newValue = roundedValue < minValue ? minValue : roundedValue;
+    input.value = newValue;
+}
 
 

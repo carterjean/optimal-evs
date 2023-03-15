@@ -4,8 +4,10 @@
 
 <script src="sketch.js"></script>
 
+<!-- div related styling -->
 <style>
 
+/* colours*/
 .target-details {
   background-color: lightblue;
   border: 2px solid dodgerblue;
@@ -26,15 +28,47 @@
   border: 2px solid grey;
 }
 
-div {
+.target-details, .attack-details, .move-details, .calc-details, .info-details, .credits {
   padding: 10px 20px;
-  text-align: center;
+  /*text-align: center;*/
+  margin: 6 /*auto*/; 
   max-width: 400px;
-  margin: 5 /*auto*/; 
+  box-shadow: 0px 4px 4px 0px darkgray; /* add a shadow effect */
+}
+
+.container {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.info-details, .credits {
+  border: 1px solid black;
+}
+
+.info-details {
+  width: 400px;
+  height: 400px;
+  display: inline-block;
+}
+
+.credits {
+  width: 400px;
+  height: 147px;
+  display: block;
+}
+
+</style>
+
+<!-- text related styling -->
+<style>
+
+body, button, input, select {
+    font-family: "Happy Monkey";
 }
 
 .target-details h3, .attack-details h3, .move-details h3 {
-  margin-top: 0;
+  margin-top: 0px;
+  margin-bottom: 12px;
 }
 
 .target-details p, .attack-details p, .move-details p {
@@ -66,8 +100,32 @@ div {
   margin-left: 0;
 }
 
-body, button {
-    font-family: "Happy Monkey";
+.calc-details p {
+  padding-left: 15px;
+}
+
+.credits h3 {
+  margin: 2px 0px;
+}
+
+</style>
+
+<!-- input related styling -->
+<style>
+
+input[type="number"], select {
+  border-color:lightgray;
+  border-radius: 5px;
+  padding: 1px;
+  text-align: center;
+}
+
+input[type="number"] {
+  width: 50px;
+}
+
+select {
+  text-align:center;
 }
 
 button {
@@ -77,6 +135,8 @@ button {
   border: 2px solid #ccc;
   border-radius: 10px;
   color: #333;
+  box-shadow: 0px 4px 4px 0px darkgray;
+  margin-bottom: 5px;
 }
 
 button:hover {
@@ -90,52 +150,79 @@ button:hover {
 
 </style>
 
-<div class="target-details">
-  <h3>Target Details</h3>
-  <p><span>Level</span><input type="text" value="100" size="5"></p>
-  <p><span>Base HP Stat</span><input type="text" size="5"></p>
-  <p><span>HP IV's</span><input type="text" value="31" size="5"></p>
-  <p><span>Base Defense / Sp. Defense Stat</span><input type="text" size="5"></p>
-  <p><span>Defense / Sp. Defense IV's</span><input type="text" value="31" size="5"></p>
-  <p><span>Remaining EV's to Invest</span><input type="text" size="5"></p>
-  <p><span>Nature</span>
-    <select name="nature">
-      <option value="neutral" selected>Def. / Sp. Def. Neutral</option>
-      <option value="positive">Def. / Sp. Def. Positive</option>
-      <option value="negative">Def. / Sp. Def. Negative</option>
-    </select>
-  </p>
+<div class="container">
+  <div class="target-details">
+    <h3>Target Details</h3><hr color="dodgerblue">
+    <p><span>Level</span><input id="targetLevel" type="number" onchange="limitValue(this);" value="100" min="1" max="100"></p>
+    <p><span>Base HP Stat</span><input id="targetBaseHP" type="number" onchange="limitValue(this);" value="0" min="1" max="255"></p>
+    <p><span>HP IV's</span><input id="targetHPIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31"></p>
+    <p><span>Base Defense / Sp. Defense Stat</span><input id="targetBaseDef" type="number" onchange="limitValue(this);" value="0" min="1" max="255"></p>
+    <p><span>Defense / Sp. Defense IV's</span><input id="targetDefIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31"></p>
+    <p><span>Remaining EV's to Invest</span><input id="remainingEVs" type="number" onchange="limitValue(this);" value="4" min="4" max="504" step="4"></p>
+    <p><span>Nature</span>
+      <select id="targetNature" name="nature">
+        <option value="neutral" selected>Def. / Sp. Def. Neutral</option>
+        <option value="positive">Def. / Sp. Def. Positive</option>
+        <option value="negative">Def. / Sp. Def. Negative</option>
+      </select>
+    </p>
+  </div>
+
+  <div class="attack-details">
+    <h3>Attacker Details</h3><hr color="lightcoral">
+    <p><span>Level</span><input id="attackLevel" type="number" onchange="limitValue(this);" value="100" min="1" max="100"></p>
+    <p><span>Base Attack / Sp. Attack Stat</span><input id="attackBaseAtk" type="number" onchange="limitValue(this);" value="0" min="1" max="255"></p>
+    <p><span>Attack / Sp. Attack IV's</span><input id="attackAtkIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31"></p>
+    <p><span>Attack / Sp. Attack EV's</span><input id="attackAtkEV" type="number" onchange="limitValue(this);" value="252" min="0" max="252" step="4"></p>
+    <p><span>Nature</span>
+      <select id="attackNature" name="nature">
+        <option value="neutral" selected>Atk. / Sp. Atk. Neutral</option>
+        <option value="positive">Atk. / Sp. Atk. Positive</option>
+        <option value="negative">Atk. / Sp. Atk. Negative</option>
+      </select>
+    </p>
+  </div>
+
+  <div class="move-details">
+    <h3>Move Details</h3><hr color="lime">
+    <p><span>Base Power</span><input id="movePower" type="number" onchange="limitValue(this);" value="0" min="0" max="65535"></p>
+    <p><span>STAB?</span><input id="STAB" type="checkbox" ></p>
+    <p><span>Type Effectiveness</span>
+      <select id="typeEffective" name="nature">
+        <option value="super">Super Effective Damage</option>
+        <option value="normal" selected>Neutral Damage</option>
+        <option value="weak">Not Very Effective Damage</option>
+      </select>
+    </p>
+    <p><span>Other Multipliers (Items, Weather)</span><input id="otherMult" type="number" onchange="limitValue(this);" value="1" min="0" max="65535"></p>
+  </div>
+
+  <div class="calc-details">
+    <button class="calc" onclick="CalcLowest()"><b>Calculate</b></button><br>
+    <p style="visibility:hidden" id="result">Make sure all of the values are filled out correctly!</p>
+  </div>
 </div>
 
-<div class="attack-details">
-  <h3>Attack Details</h3>
-  <p><span>Level</span><input type="text" value="100" size="5"></p>
-  <p><span>Base Attack / Sp. Attack Stat</span><input type="text" size="5"></p>
-  <p><span>Attack / Sp. Attack IV's</span><input type="text" value="31" size="5"></p>
-  <p><span>Attack / Sp. Attack EV's</span><input type="text" value="252" size="5"></p>
-  <p><span>Nature</span>
-    <select name="nature">
-      <option value="neutral" selected>Atk. / Sp. Atk. Neutral</option>
-      <option value="positive">Atk. / Sp. Atk. Positive</option>
-      <option value="negative">Atk. / Sp. Atk. Negative</option>
-    </select>
-  </p>
-</div>
+<div class="container">
+  <div class="info-details">
+    <h2>Optimal EV Spread Calculator</h2><hr>
+      <p>
+        This calculator is made to optimize the damage taken from a <i>specific attack</i> from a <i>specific Pokemon</i>.<br><br>
+        For example, a Blizzard from Abomasnow will do more damage to you if you invest your remaining 72 EV's into your HP,
+        than if you were to invest some of your EV's into Special Defense. <i>But how much should I invest to take the least damage?</i><br><br>
+        That is what this tool determines! Input the base stats, IV's, EV's and nature for both the target and attacker,
+        as well as the base power of the attack, and any other modifiers. The tool will determine the optimal HP-Defense split.
+      
+      
+      
+      </p>
+  </div>
 
-<div class="move-details">
-  <h3>Move Details</h3>
-  <p><span>Base Power</span><input type="text" size="5"></p>
-  <p><span>STAB?</span><input type="checkbox" size="5"></p>
-  <p><span>Type Effectiveness</span>
-    <select name="nature">
-      <option value="normal">Neutral Damage</option>
-      <option value="super" selected>Super Effective Damage</option>
-      <option value="weak">Not Very Effective Damage</option>
-    </select>
-  </p>
-  <p><span>Other Multipliers (Abilities, Items)</span><input type="text" size="5"></p>
-</div>
-
-<div class="calc-details">
-  <button class="calc">Calculate</button>
+  <div class="credits">
+    <h3>Credits</h3><hr>
+      <p>
+        Damage formula and stat formula obtained from Bulbapedia<br><br>
+        Created by Carter Jean
+      </p>
+  </div>
 </div>
