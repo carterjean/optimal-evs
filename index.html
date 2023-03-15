@@ -1,0 +1,141 @@
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Happy%20Monkey">
+</head>
+
+<script src="sketch.js"></script>
+
+<style>
+
+.target-details {
+  background-color: lightblue;
+  border: 2px solid dodgerblue;
+}
+
+.attack-details {
+  background-color:lightpink;
+  border: 2px solid lightcoral;
+}
+
+.move-details {
+  background-color:palegreen;
+  border: 2px solid lime;
+}
+
+.calc-details {
+  background-color: lightgray;
+  border: 2px solid grey;
+}
+
+div {
+  padding: 10px 20px;
+  text-align: center;
+  max-width: 400px;
+  margin: 5 /*auto*/; 
+}
+
+.target-details h3, .attack-details h3, .move-details h3 {
+  margin-top: 0;
+}
+
+.target-details p, .attack-details p, .move-details p {
+  line-height: 1.5em;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.target-details span, .attack-details span, .move-details span {
+  display: inline-block;
+  text-align: left;
+  width: 300px;
+}
+
+.target-details input, .target-details select, 
+.attack-details input, .attack-details select,
+.move-details input, .move-details select {
+  margin-left: 10px;
+}
+
+.target-details input:first-of-type,
+.target-details select:first-of-type,
+.attack-details input:first-of-type,
+.attack-details select:first-of-type,
+.move-details input:first-of-type,
+.move-details select:first-of-type {
+  margin-left: 0;
+}
+
+body, button {
+    font-family: "Happy Monkey";
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  color: #333;
+}
+
+button:hover {
+  background-color: #ddd;
+}
+
+.calc-details {
+  display: flex;
+  justify-content: center;
+}
+
+</style>
+
+<div class="target-details">
+  <h3>Target Details</h3>
+  <p><span>Level</span><input type="text" value="100" size="5"></p>
+  <p><span>Base HP Stat</span><input type="text" size="5"></p>
+  <p><span>HP IV's</span><input type="text" value="31" size="5"></p>
+  <p><span>Base Defense / Sp. Defense Stat</span><input type="text" size="5"></p>
+  <p><span>Defense / Sp. Defense IV's</span><input type="text" value="31" size="5"></p>
+  <p><span>Remaining EV's to Invest</span><input type="text" size="5"></p>
+  <p><span>Nature</span>
+    <select name="nature">
+      <option value="neutral" selected>Def. / Sp. Def. Neutral</option>
+      <option value="positive">Def. / Sp. Def. Positive</option>
+      <option value="negative">Def. / Sp. Def. Negative</option>
+    </select>
+  </p>
+</div>
+
+<div class="attack-details">
+  <h3>Attack Details</h3>
+  <p><span>Level</span><input type="text" value="100" size="5"></p>
+  <p><span>Base Attack / Sp. Attack Stat</span><input type="text" size="5"></p>
+  <p><span>Attack / Sp. Attack IV's</span><input type="text" value="31" size="5"></p>
+  <p><span>Attack / Sp. Attack EV's</span><input type="text" value="252" size="5"></p>
+  <p><span>Nature</span>
+    <select name="nature">
+      <option value="neutral" selected>Atk. / Sp. Atk. Neutral</option>
+      <option value="positive">Atk. / Sp. Atk. Positive</option>
+      <option value="negative">Atk. / Sp. Atk. Negative</option>
+    </select>
+  </p>
+</div>
+
+<div class="move-details">
+  <h3>Move Details</h3>
+  <p><span>Base Power</span><input type="text" size="5"></p>
+  <p><span>STAB?</span><input type="checkbox" size="5"></p>
+  <p><span>Type Effectiveness</span>
+    <select name="nature">
+      <option value="normal">Neutral Damage</option>
+      <option value="super" selected>Super Effective Damage</option>
+      <option value="weak">Not Very Effective Damage</option>
+    </select>
+  </p>
+  <p><span>Other Multipliers (Abilities, Items)</span><input type="text" size="5"></p>
+</div>
+
+<div class="calc-details">
+  <button class="calc">Calculate</button>
+</div>
