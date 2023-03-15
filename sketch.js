@@ -95,14 +95,14 @@ function CalcLowest()
             lowestIndex = i;
         }
     }
-    lowest = lowest.toFixed(3) * 100;
+    lowest = round(lowest * 100, 1);
 
     console.log(lowest, lowestIndex);
     document.getElementById("result").innerHTML =
-    "In order to take a minimum high roll of " + lowest.toString() + 
-    "%, you would need to invest " + lowestIndex.toString() +
-    " EV's into HP, and " + (remainingEVs-lowestIndex).toString() +
-    " EV's into Defense / Special Defense."
+    "In order to take a minimum high roll of <b>" + lowest.toString() + 
+    "%</b>, you would need to invest <b>" + lowestIndex.toString() +
+    "</b> EV's into HP, and <b>" + (remainingEVs-lowestIndex).toString() +
+    "</b> EV's into Defense / Special Defense."
     document.getElementById("result").style.visibility = "visible";
 }
 
@@ -152,4 +152,10 @@ function limitValue(input)
     input.value = newValue;
 }
 
+// round function
+function round(n, digits)
+{
+    tens = Math.pow(10, digits)
+    return Math.round(tens * n)/tens
+}
 
