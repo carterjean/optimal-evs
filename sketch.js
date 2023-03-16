@@ -108,7 +108,7 @@ function CalcLowest()
     "In order to take a minimum high roll of <b>" + lowest.toString() + 
     "%</b>, you would need to invest <b>" + Math.min(252, lowestIndex).toString() +
     "</b> EV's into HP, and <b>" + Math.min(252, remainingEVs-lowestIndex).toString() +
-    "</b> EV's into Defense / Special Defense. Any set besides this is considered <b>cowardice</b>"
+    "</b> EV's into Defense / Special Defense. Any set besides this is <b>cowardice</b>."
     document.getElementById("result").style.visibility = "visible";
 }
 

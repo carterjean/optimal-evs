@@ -1,6 +1,6 @@
 <head>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Happy%20Monkey">
-<meta name="viewport" content="width=device-width,initial-scale=0.90,user-scalable=no"/>
+<meta name="viewport" content="width=device-width,initial-scale=0.75,user-scalable=no"/>
 </head>
 
 <script src="sketch.js"></script>
@@ -139,6 +139,7 @@ button {
   box-shadow: 0px 4px 4px 0px darkgray;
   margin-bottom: 5px;
   height: 110px;
+  vertical-align: center;
 }
 
 button:hover {
@@ -148,6 +149,7 @@ button:hover {
 .calc-details {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 </style>
@@ -210,7 +212,7 @@ button:hover {
     <h2>Optimal EV Spread Calculator</h2><hr>
       <p>
         This calculator is made to optimize the damage taken from a <i>specific attack</i> from a <i>specific Poke&#x301mon</i>.<br><br>
-        For example, a Blizzard from Abomasnow will do more damage to you if you invest your remaining 72 EV's into HP,
+        For example, an attack from a Special Attacker will do more damage to you if you invest your remaining 72 EV's into HP,
         than if you were to invest some of your EV's into Special Defense. <i>But how much should I invest to take the least damage?</i><br><br>
         That is what this tool determines! Input the base stats, IV's, EV's and nature for both the target and attacker,
         as well as the base power of the attack, and any other modifiers. The tool will determine the optimal HP-Defense split.<br><br>
