@@ -27,8 +27,14 @@ function StatCalc(base, iv, ev, level, nature)
 // calculate damage based on level, base power, atk/def stats, and other multipliers
 function DamageCalc(level, power, atk, def, stab, type, other)
 {
-    calc1 = ((((2 * level)/5) + 2) * power * (atk/def))/50 + 2
-    return Math.floor(calc1 * stab * type * other);
+    calc1 = Math.floor(Math.floor((Math.floor((2 * level)/5) + 2) * power * atk / def)/50 + 2)
+    calc1 *= stab;
+    calc1 = (calc1 - Math.floor(calc1) == 0.5 ? Math.floor(calc1) : Math.round(calc1));
+    calc1 *= type;
+    calc1 = (calc1 - Math.floor(calc1) == 0.5 ? Math.floor(calc1) : Math.round(calc1));
+    calc1 *= other;
+    calc1 = (calc1 - Math.floor(calc1) == 0.5 ? Math.floor(calc1) : Math.round(calc1));
+    return calc1;
 }
 
 // the function that is called when the button is pressed
@@ -77,8 +83,8 @@ function CalcLowest()
         DEF_EV = Math.min(252, remainingEVs - i);
 
         damages.push(DamageCalc(attackLevel, movePower, 
-            StatCalc(attackBaseAtk, attackAtkIV, attackAtkEV, attackLevel, 1.1), 
-            StatCalc(targetBaseDef, targetDefIV, DEF_EV, targetLevel, 1), 
+            StatCalc(attackBaseAtk, attackAtkIV, attackAtkEV, attackLevel, attackNature), 
+            StatCalc(targetBaseDef, targetDefIV, DEF_EV, targetLevel, targetNature), 
             STAB, typeEffective, otherMult)/
             HPStatCalc(targetBaseHP, targetHPIV, HP_EV, targetLevel));
     }
@@ -100,8 +106,8 @@ function CalcLowest()
     console.log(lowest, lowestIndex);
     document.getElementById("result").innerHTML =
     "In order to take a minimum high roll of <b>" + lowest.toString() + 
-    "%</b>, you would need to invest <b>" + lowestIndex.toString() +
-    "</b> EV's into HP, and <b>" + (remainingEVs-lowestIndex).toString() +
+    "%</b>, you would need to invest <b>" + Math.min(252, lowestIndex).toString() +
+    "</b> EV's into HP, and <b>" + Math.min(252, remainingEVs-lowestIndex).toString() +
     "</b> EV's into Defense / Special Defense."
     document.getElementById("result").style.visibility = "visible";
 }
