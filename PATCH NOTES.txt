@@ -11,3 +11,5 @@ v1.2:
 - Reworded the result format.
 - Reworded the calculator description.
 - Added proper credits for the PokeAPI.
+- Adjust some visuals.
+- Squashed some bugs.
