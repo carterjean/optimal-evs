@@ -162,3 +162,17 @@ img {
 img[src] {
     visibility: visible;
 }
+
+#progressBar {
+    height:15px;
+    width:99.5%;
+    border:1px solid black;
+    margin-top: 10px;
+}
+
+#progress {
+    background-color: limegreen;
+    width: 1%;
+    display:block;
+    height:15px;
+}

@@ -4,6 +4,12 @@ natureValues = {
     "negative" : 0.9
 }
 
+totalPokemon = 1010;
+totalMoves = 902;
+totalNatures = 25;
+totalItems = 725;
+totalFiles = totalPokemon + totalMoves + totalNatures + totalItems;
+
 // calculate hp total based on base stat, evs, ivs, and level
 function HPStatCalc(base, iv, ev, level)
 {
@@ -279,7 +285,7 @@ window.onload = async function()
     targetMenu = document.getElementById("importTargetMenu");
     attackMenu = document.getElementById("importAttackMenu");
 
-    for (i = 1; i < 1011; i++)
+    for (i = 1; i < totalPokemon+1; i++)
     {
         data = await getData("pokemon-species", i.toString());
 
@@ -291,12 +297,13 @@ window.onload = async function()
             {
                 option = new Option();
                 option.value = pokemonName;
-                console.log(pokemonName);
+                //console.log(pokemonName);
                 option.text = titleCase(pokemonName);
 
                 targetMenu.add(option);
             }
         }
+        updateProgress(i);
     }
     attackMenu.innerHTML += targetMenu.innerHTML;
     // ---------------------------------------------------
@@ -304,7 +311,7 @@ window.onload = async function()
     // moves   -------------------------------------------
     moveMenu = document.getElementById("importMoveMenu");
 
-    for (i = 1; i < 903; i++)
+    for (i = 1; i < totalMoves+1; i++)
     {
         data = await getData("move", i.toString());
 
@@ -312,7 +319,7 @@ window.onload = async function()
         {
             option = new Option();
             option.value = data["name"];
-            console.log(option.value);
+            //console.log(option.value);
 
             for (j = 0; j < data["names"].length; j++)
             {
@@ -325,6 +332,7 @@ window.onload = async function()
 
             moveMenu.add(option);
         }
+        updateProgress(totalPokemon + i);
     }
     // ---------------------------------------------------
 
@@ -332,7 +340,7 @@ window.onload = async function()
     targetNatureMenu = document.getElementById("targetNatureMenu");
     attackNatureMenu = document.getElementById("attackNatureMenu");
 
-    for (i = 1; i < 25; i++)
+    for (i = 1; i < totalNatures+1; i++)
     {
         data = await getData("nature", i.toString());
 
@@ -352,6 +360,7 @@ window.onload = async function()
 
             targetNatureMenu.add(option);
         }
+        updateProgress(totalPokemon + totalMoves + i);
     }
     attackNatureMenu.innerHTML += targetNatureMenu.innerHTML;
 
@@ -361,7 +370,7 @@ window.onload = async function()
     targetItemMenu = document.getElementById("targetItemMenu");
     attackItemMenu = document.getElementById("attackItemMenu");
 
-    for (i = 1; i < 726; i++)
+    for (i = 1; i < totalItems+1; i++)
     {
         try {
             data = await getData("item",  i.toString());
@@ -370,7 +379,7 @@ window.onload = async function()
             {
                 option = new Option();
                 option.value = data["name"];
-                console.log(option.value, data["category"]["name"]);
+                //console.log(option.value, data["category"]["name"]);
 
                 for (j = 0; j < data["names"].length; j++)
                 {
@@ -388,6 +397,8 @@ window.onload = async function()
         {
             //console.log("error finding item")
         }
+
+        updateProgress(totalPokemon + totalMoves + totalNatures + i);
     }
     attackItemMenu.innerHTML += targetItemMenu.innerHTML;
     // ---------------------------------------------------
@@ -397,6 +408,7 @@ window.onload = async function()
         document.getElementsByClassName("loading")[i].style.display = "none";
         document.getElementsByClassName("menu")[i].style.display = "block";
     }
+    document.getElementById("progressBar").style.display = "none";
 }
 
 function pokemonViable(name)
@@ -459,6 +471,13 @@ async function natureToValue(nature, stat)
         }
     }
     return 1;
+}
+
+// function for updating the progress bar
+function updateProgress(prog)
+{
+    fraction = prog/totalFiles;
+    document.getElementById("progress").style.width = (fraction*100).toString() + "%";
 }
 
 // function for adjusting the input fields
