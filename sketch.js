@@ -291,7 +291,7 @@ window.onload = async function()
             {
                 option = new Option();
                 option.value = pokemonName;
-                //console.log(pokemonName);
+                console.log(pokemonName);
                 option.text = titleCase(pokemonName);
 
                 targetMenu.add(option);
@@ -312,7 +312,7 @@ window.onload = async function()
         {
             option = new Option();
             option.value = data["name"];
-            //console.log(option.value);
+            console.log(option.value);
 
             for (j = 0; j < data["names"].length; j++)
             {
@@ -370,7 +370,7 @@ window.onload = async function()
             {
                 option = new Option();
                 option.value = data["name"];
-                //console.log(option.value, data["category"]["name"]);
+                console.log(option.value, data["category"]["name"]);
 
                 for (j = 0; j < data["names"].length; j++)
                 {
