@@ -9,6 +9,7 @@ totalMoves = 902;
 totalNatures = 25;
 totalItems = 725;
 totalFiles = totalPokemon + totalMoves + totalNatures + totalItems;
+loaded = false;
 
 // calculate hp total based on base stat, evs, ivs, and level
 function HPStatCalc(base, iv, ev, level)
@@ -389,7 +390,6 @@ window.onload = async function()
                         break;
                     }
                 }
-
                 targetItemMenu.add(option);
             }
         } 
@@ -409,6 +409,8 @@ window.onload = async function()
         document.getElementsByClassName("menu")[i].style.display = "block";
     }
     document.getElementById("progressBar").style.display = "none";
+
+    loaded = true;
 }
 
 function pokemonViable(name)
