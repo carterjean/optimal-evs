@@ -4,12 +4,6 @@ natureValues = {
     "negative" : 0.9
 }
 
-typeValues = {
-    "super" : 2,
-    "normal" : 1,
-    "weak" : 0.5
-}
-
 // calculate hp total based on base stat, evs, ivs, and level
 function HPStatCalc(base, iv, ev, level)
 {
@@ -28,48 +22,66 @@ function StatCalc(base, iv, ev, level, nature)
 function DamageCalc(level, power, atk, def, stab, type, other)
 {
     calc1 = Math.floor(Math.floor((Math.floor((2 * level)/5) + 2) * power * atk / def)/50 + 2)
-    calc1 *= stab;
-    calc1 = (calc1 - Math.floor(calc1) == 0.5 ? Math.floor(calc1) : Math.round(calc1));
-    calc1 *= type;
-    calc1 = (calc1 - Math.floor(calc1) == 0.5 ? Math.floor(calc1) : Math.round(calc1));
-    calc1 *= other;
-    calc1 = (calc1 - Math.floor(calc1) == 0.5 ? Math.floor(calc1) : Math.round(calc1));
+    calc1 = mult(calc1, stab);
+    calc1 = mult(calc1, type);
+    calc1 = mult(calc1, other);
     return calc1;
 }
 
 // the function that is called when the button is pressed
-function CalcLowest()
+async function CalcLowest()
 {
+    physical = (document.getElementById("moveCategory").value === "physical");
     // target div
     targetLevel   = parseInt(document.getElementById("targetLevel").value);
     targetBaseHP  = parseInt(document.getElementById("targetBaseHP").value);
     targetHPIV    = parseInt(document.getElementById("targetHPIV").value);
-    targetBaseDef = parseInt(document.getElementById("targetBaseDef").value);
-    targetDefIV   = parseInt(document.getElementById("targetDefIV").value);
+
+    targetBaseDef = (physical ? 
+        parseInt(document.getElementById("targetBaseDef").value) :
+        parseInt(document.getElementById("targetBaseSpDef").value)
+    );
+    targetDefIV   = (physical ? 
+        parseInt(document.getElementById("targetDefIV").value) :
+        parseInt(document.getElementById("targetSpDefIV").value)
+    );
+
     remainingEVs  = parseInt(document.getElementById("remainingEVs").value);
-    targetNature  = document.getElementById("targetNature").value;
+    targetNature  = document.getElementById("targetNatureMenu").value;
 
     // attacker div
     attackLevel   = parseInt(document.getElementById("attackLevel").value);
-    attackBaseAtk = parseInt(document.getElementById("attackBaseAtk").value);
-    attackAtkIV   = parseInt(document.getElementById("attackAtkIV").value);
-    attackAtkEV   = parseInt(document.getElementById("attackAtkEV").value);
-    attackNature  = document.getElementById("attackNature").value;
+
+    attackBaseAtk = (physical ? 
+        parseInt(document.getElementById("attackBaseAtk").value) :
+        parseInt(document.getElementById("attackBaseSpAtk").value) 
+    );
+    attackAtkIV   = (physical ?
+        parseInt(document.getElementById("attackAtkIV").value) :
+        parseInt(document.getElementById("attackSpAtkIV").value)
+    );
+    attackAtkEV   = (physical ? 
+        parseInt(document.getElementById("attackAtkEV").value) :
+        parseInt(document.getElementById("attackAtkEV").value)
+    );
+
+    attackNature  = document.getElementById("attackNatureMenu").value;
 
     // move div
     movePower     = parseInt(document.getElementById("movePower").value);
     STAB          = document.getElementById("STAB").checked;
-    typeEffective = document.getElementById("typeEffective").value;
+    typeEffective = Number(document.getElementById("typeEffective").value);
     otherMult     = parseInt(document.getElementById("otherMult").value);
 
     // handling misc attributes
-    targetNature = natureValues[targetNature];
-    attackNature = natureValues[attackNature];
+    targetNature = await natureToValue(targetNature, (physical ? "defense" : "special-defense"));
+    attackNature = await natureToValue(attackNature, (physical ? "attack" : "special-attack"));
+
     STAB = (STAB ? 1.5 : 1);
-    typeEffective = typeValues[typeEffective];
 
     if (errorValues())
     {
+        document.getElementById("result").innerHTML = "lol";
         document.getElementById("result").style.visibility = "visible";
         return;
     }
@@ -101,14 +113,15 @@ function CalcLowest()
             lowestIndex = i;
         }
     }
+    console.log(lowest);
     lowest = round(lowest * 100, 1);
 
-    console.log(lowest, lowestIndex);
+    //console.log(lowest, lowestIndex);
     document.getElementById("result").innerHTML =
     "In order to take a minimum high roll of <b>" + lowest.toString() + 
     "%</b>, you would need to invest <b>" + Math.min(252, lowestIndex).toString() +
     "</b> EV's into HP, and <b>" + Math.min(252, remainingEVs-lowestIndex).toString() +
-    "</b> EV's into Defense / Special Defense. Any set besides this is <b>cowardice</b>."
+    "</b> EV's into " + (physical ? "Defense" : "Special Defense") +". Any set besides this is <b>cowardice</b>."
     document.getElementById("result").style.visibility = "visible";
 }
 
@@ -149,6 +162,305 @@ function errorValues()
     return false;
 }
 
+// function for retrieving pokemon stats
+async function getData(category, name) 
+{
+    formattedName = name.toLowerCase().trim();
+    let url = "https://pokeapi.co/api/v2/" + category + "/" + formattedName;
+    try 
+    {
+        let res = await fetch(url);
+        let pokemon = await res.json();
+        return pokemon;
+    } catch (error)
+    {
+        console.log("error finding data");
+        // error stuff here
+        return 0;
+    }
+}
+
+async function importPokemon(importField, statTypes, statFields, typeFields)
+{
+    data = await getData("pokemon", document.getElementById(importField).value);
+    if (data != 0)
+    {
+        stats = data["stats"];
+        types = data["types"];
+
+        for (i = 0; i < statTypes.length; i++)
+        {
+            document.getElementById(statFields[i]).value = parseInt(stats[statTypes[i]]["base_stat"]);
+        }
+
+        for (i = 0; i < typeFields.length; i++)
+        {
+            try {
+            document.getElementById(typeFields[i]).value = types[i]["type"]["name"];
+            } catch (error)
+            {
+                document.getElementById(typeFields[i]).value = "(none)";
+            }
+        }
+    }
+    importMove(['attackType1', 'attackType2'], ['targetType1', 'targetType2'])
+}
+
+async function importMove(attackTypes, targetTypes)
+{
+    data = await getData("move", document.getElementById("importMoveMenu").value);
+    if (data != 0)
+    {
+        
+        power = data["power"];
+        type = data["type"]["name"];
+        category = data["damage_class"]["name"];
+
+        document.getElementById("moveType").value = type;
+        document.getElementById("moveCategory").value = category;
+        document.getElementById("movePower").value = power;
+        document.getElementById("STAB").checked = false;
+
+        try {
+            for (i = 0; i < attackTypes.length; i++)
+            {
+                if (document.getElementById(attackTypes[i]).value == type)
+                {
+                    document.getElementById("STAB").checked = true;
+                    break;
+                }
+            }
+        } 
+        catch(error)
+        {
+
+        }
+
+        effectiveness = document.getElementById("typeEffective"); 
+        data = await getData("type", type);
+        damageRelations = data["damage_relations"];
+
+        currentEffective = 1;
+
+        for (i = 0; i < 2; i++)
+        {
+            currentType = document.getElementById(targetTypes[i]).value;
+            for (j = 0; j < damageRelations["double_damage_to"].length; j++)
+            {
+                if (currentType === damageRelations["double_damage_to"][j]["name"])
+                {
+                    currentEffective *= 2;
+                }
+            }
+            for (j = 0; j < damageRelations["half_damage_to"].length; j++)
+            {
+                if (currentType === damageRelations["half_damage_to"][j]["name"])
+                {
+                    currentEffective *= 0.5;
+                }
+            }
+            for (j = 0; j < damageRelations["no_damage_to"].length; j++)
+            {
+                if (currentType === damageRelations["no_damage_to"][j]["name"])
+                {
+                    currentEffective *= 0;
+                }
+            }
+        }
+
+        effectiveness.value = currentEffective.toString();
+        
+    }
+}
+
+window.onload = async function() 
+{
+    // pokemon -------------------------------------------
+    targetMenu = document.getElementById("importTargetMenu");
+    attackMenu = document.getElementById("importAttackMenu");
+
+    for (i = 1; i < 1011; i++)
+    {
+        data = await getData("pokemon-species", i.toString());
+
+        for (k = 0; k < data["varieties"].length; k++)
+        {
+            pokemonName = data["varieties"][k]["pokemon"]["name"];
+
+            if (pokemonViable(pokemonName))
+            {
+                option = new Option();
+                option.value = pokemonName;
+                //console.log(pokemonName);
+                option.text = titleCase(pokemonName);
+
+                targetMenu.add(option);
+            }
+        }
+    }
+    attackMenu.innerHTML += targetMenu.innerHTML;
+    // ---------------------------------------------------
+
+    // moves   -------------------------------------------
+    moveMenu = document.getElementById("importMoveMenu");
+
+    for (i = 1; i < 903; i++)
+    {
+        data = await getData("move", i.toString());
+
+        if (data["learned_by_pokemon"].length > 0 && data["damage_class"]["name"] != "status")
+        {
+            option = new Option();
+            option.value = data["name"];
+            //console.log(option.value);
+
+            for (j = 0; j < data["names"].length; j++)
+            {
+                if (data["names"][j]["language"]["name"] === "en")
+                {
+                    option.text = data["names"][j]["name"];
+                    break;
+                }
+            }
+
+            moveMenu.add(option);
+        }
+    }
+    // ---------------------------------------------------
+
+    // natures -------------------------------------------
+    targetNatureMenu = document.getElementById("targetNatureMenu");
+    attackNatureMenu = document.getElementById("attackNatureMenu");
+
+    for (i = 1; i < 25; i++)
+    {
+        data = await getData("nature", i.toString());
+
+        if (true)
+        {
+            option = new Option();
+            option.value = data["name"];
+
+            for (j = 0; j < data["names"].length; j++)
+            {
+                if (data["names"][j]["language"]["name"] === "en")
+                {
+                    option.text = data["names"][j]["name"];
+                    break;
+                }
+            }
+
+            targetNatureMenu.add(option);
+        }
+    }
+    attackNatureMenu.innerHTML += targetNatureMenu.innerHTML;
+
+    // ---------------------------------------------------
+
+    // items   -------------------------------------------
+    targetItemMenu = document.getElementById("targetItemMenu");
+    attackItemMenu = document.getElementById("attackItemMenu");
+
+    for (i = 1; i < 726; i++)
+    {
+        try {
+            data = await getData("item",  i.toString());
+
+            if (itemViable(data["category"]["name"]))
+            {
+                option = new Option();
+                option.value = data["name"];
+                //console.log(option.value, data["category"]["name"]);
+
+                for (j = 0; j < data["names"].length; j++)
+                {
+                    if (data["names"][j]["language"]["name"] === "en")
+                    {
+                        option.text = data["names"][j]["name"];
+                        break;
+                    }
+                }
+
+                targetItemMenu.add(option);
+            }
+        } 
+        catch (error)
+        {
+            //console.log("error finding item")
+        }
+    }
+    attackItemMenu.innerHTML += targetItemMenu.innerHTML;
+    // ---------------------------------------------------
+
+    for (i = 0; i < document.getElementsByClassName("loading").length; i++)
+    {
+        document.getElementsByClassName("loading")[i].style.display = "none";
+        document.getElementsByClassName("menu")[i].style.display = "block";
+    }
+}
+
+function pokemonViable(name)
+{
+    suffixes = [
+        "-mega", "-gmax", "-x", "-y", "-star", "-belle", "-phd", "-cap", "-libre", "-starter",
+        "-primal", "-construct", "-totem", "-tempo", "-build", "-mode", "-plumage", "-roaming", 
+        "-three", "-segment", "-cosplay"
+    ];
+    if (name.includes("totem"))
+    {
+        return false;
+    }
+    for (ii = 0; ii < suffixes.length; ii++)
+    {
+        if (name.endsWith(suffixes[ii]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+function itemViable(category)
+{
+    categories = [
+        "standard-balls", "special-balls", "healing", "status-cures", "revival", "pp-recovery",
+        "vitamins", "stat-boosts", "spelunking", "flutes", "evolution", "loot", "collectibles",
+        "dex-completion", "mulch", "all-mail", "baking-only", "effort-drop", "effort-training",
+        "training", "scarves", "all-machines", "gameplay", "unused", "event-items", "plot-advancement",
+        "apricorn-balls", "apricorn-box", "data-cards", "jewels", "miracle-shooter", "mega-stones",
+        "memories", "z-crystals", "species-specific", "medicine", "other", "picky-healing", "in-a-pinch"
+    ];
+    for (ii = 0; ii < categories.length; ii++)
+    {
+        if (category === categories[ii])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+// function for converting natures to the value
+async function natureToValue(nature, stat)
+{
+    data = await getData("nature", nature);
+    if (data["increased_stat"] != null)
+    {
+        if (data["increased_stat"]["name"] === stat)
+        {
+            return 1.1;
+        }
+    }
+    if (data["decreased_stat"] != null)
+    {
+        if (data["decreased_stat"]["name"] === stat)
+        {
+            return 0.9;
+        }
+    }
+    return 1;
+}
+
 // function for adjusting the input fields
 function limitValue(input)
 {
@@ -158,10 +470,42 @@ function limitValue(input)
     input.value = newValue;
 }
 
+// function for displaying the modifiers tab
+function showModifiers()
+{
+    mods = document.getElementsByClassName("modifier-details")[0];
+    mods.style.display = (mods.style.display == "none" ? "block" : "none");
+}
+
+// rounded multiplication
+function mult(a, b)
+{
+    result = a * b;
+    result = (result - Math.floor(result) == 0.5 ? Math.floor(result) : Math.round(result));
+    return result;
+}
+
 // round function
 function round(n, digits)
 {
     tens = Math.pow(10, digits)
-    return Math.round(tens * n)/tens
+    return Math.floor(tens * n)/tens
+}
+
+// titlecase function 
+function titleCase(str) {
+    newName = str.charAt(0).toUpperCase();
+    for (j = 0; j < str.length-1; j++)
+    {
+        if (str.charAt(j) === " " || str.charAt(j) === "-") 
+        {
+            newName += str.charAt(j+1).toUpperCase();
+        } 
+        else
+        {
+            newName += str.charAt(j+1)
+        }
+    }
+    return newName;
 }
 

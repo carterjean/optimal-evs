@@ -1,0 +1,164 @@
+
+/* colours */
+.target-details {
+    background-color: lightblue;
+    border: 2px solid dodgerblue;
+}
+
+.attack-details {
+    background-color:lightpink;
+    border: 2px solid lightcoral;
+}
+
+.move-details {
+    background-color:palegreen;
+    border: 2px solid lime;
+}
+
+.calc-details {
+    background-color: lightgray;
+    border: 2px solid grey;
+}
+
+.modifier-details {
+    background-color:plum;
+    border: 2px solid blueviolet;
+}
+
+.info-details, .credits {
+    border: 1px solid black;
+}
+/*  --------------------------------------- */
+
+/* general div formatting */
+.target-details, .attack-details, .move-details, .calc-details, .modifier-details, .info-details, .credits {
+    padding: 0px 20px 10px;
+    margin: 3 auto; 
+    max-width: 400px;
+    box-shadow: 0px 4px 4px 0px darkgray; /* add a shadow effect */
+}
+
+.container {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.info-details {
+    width: 400px;
+    display: inline-block;
+}
+
+.credits {
+    width: 400px;
+    display: block;
+}
+
+body, button, input, select {
+    font-family: "Happy Monkey";
+}
+
+.target-details h3, .attack-details h3, .move-details h3, .modifier-details h3, .info-details h2, .credits h3 {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.target-details p, .attack-details p, .move-details p, .modifier-details p {
+    line-height: 1.5em;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+span {
+    display: inline-block;
+    text-align: left;
+    width: 300px;
+}
+
+.target-details input, .target-details select, 
+.attack-details input, .attack-details select,
+.move-details input, .move-details select,
+.modifier-details input, .modifier-details select {
+    margin-left: 10px;
+}
+
+.target-details input:first-of-type,
+.target-details select:first-of-type,
+.attack-details input:first-of-type,
+.attack-details select:first-of-type,
+.move-details input:first-of-type,
+.move-details select:first-of-type
+.modifier-details input:first-of-type,
+.modifier-details select:first-of-type {
+    margin-left: 0;
+}
+
+.calc-details p {
+    padding-left: 15px;
+}
+
+input[type="number"], select, input[type="text"] {
+    border-color:lightgray;
+    border-radius: 5px;
+    padding: 1px;
+}
+
+input[type="number"], select {
+    text-align: center;
+}
+
+input[type="number"] {
+    width: 50px;
+}
+
+input[type="text"] {
+    margin-right:5px;
+}
+
+button {
+    font-size: 16px;
+    background-color: #f5f5f5;
+    border: 2px solid #ccc;
+    color: #333;
+    box-shadow: 0px 4px 4px 0px darkgray;
+    vertical-align: center;
+}
+
+button:hover {
+    background-color: #ddd;
+}
+
+.target-details button, .attack-details button, .move-details button {
+    font-size: 13px;
+}
+
+.calc-details button {
+    padding: 10px 20px;
+    height: 75px;
+    border-radius: 10px;
+}
+
+.calc-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 130px;
+}
+
+.menu {
+    display:none;
+}
+
+.loading {
+    text-align: right;
+}
+
+img {
+    vertical-align:middle;
+    visibility: hidden;
+}
+
+img[src] {
+    visibility: visible;
+}

@@ -1,0 +1,13 @@
+[ PATCH NOTES ]
+
+v1.2:
+- Added the ability to automatically import Pokemon stats.
+- Added the ability to automatically import move stats.
+- Added a physical / special split, with detection for them.
+- Changed the nature select menu to include all 25 natures.
+- Added the ability to change a Pokemon's type.
+- Added the ability to add held items (Note: some calculations for held items are still non-functional).
+- Added a modifier tab to be used in future versions.
+- Reworded the result format.
+- Reworded the calculator description.
+- Added proper credits for the PokeAPI.

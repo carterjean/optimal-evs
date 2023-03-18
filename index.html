@@ -1,204 +1,295 @@
 <head>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Happy%20Monkey">
-<meta name="viewport" content="width=device-width,initial-scale=0.8,user-scalable=no"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Happy%20Monkey">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
+  <link rel="stylesheet" href="style.css">
+  <script src="sketch.js"></script>
+  <title>carterjean's Optimal EV Spread Calculator</title>
 </head>
-
-<script src="sketch.js"></script>
-
-<!-- div related styling -->
-<style>
-
-/* colours*/
-.target-details {
-  background-color: lightblue;
-  border: 2px solid dodgerblue;
-}
-
-.attack-details {
-  background-color:lightpink;
-  border: 2px solid lightcoral;
-}
-
-.move-details {
-  background-color:palegreen;
-  border: 2px solid lime;
-}
-
-.calc-details {
-  background-color: lightgray;
-  border: 2px solid grey;
-}
-
-.target-details, .attack-details, .move-details, .calc-details, .info-details, .credits {
-  padding: 10px 20px;
-  /*text-align: center;*/
-  margin: 3 auto; 
-  max-width: 400px;
-  box-shadow: 0px 4px 4px 0px darkgray; /* add a shadow effect */
-}
-
-.container {
-  display: inline-block;
-  vertical-align: top;
-}
-
-.info-details, .credits {
-  border: 1px solid black;
-}
-
-.info-details {
-  width: 400px;
-  /*height: 470px;*/
-  display: inline-block;
-}
-
-.credits {
-  width: 400px;
-  /*height: 147px;*/
-  display: block;
-}
-
-</style>
-
-<!-- text related styling -->
-<style>
-
-body, button, input, select {
-    font-family: "Happy Monkey";
-}
-
-.target-details h3, .attack-details h3, .move-details h3, .info-details h2 {
-  margin-top: 2px;
-  margin-bottom: 12px;
-}
-
-.target-details p, .attack-details p, .move-details p {
-  line-height: 1.5em;
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.target-details span, .attack-details span, .move-details span {
-  display: inline-block;
-  text-align: left;
-  width: 300px;
-}
-
-.target-details input, .target-details select, 
-.attack-details input, .attack-details select,
-.move-details input, .move-details select {
-  margin-left: 10px;
-}
-
-.target-details input:first-of-type,
-.target-details select:first-of-type,
-.attack-details input:first-of-type,
-.attack-details select:first-of-type,
-.move-details input:first-of-type,
-.move-details select:first-of-type {
-  margin-left: 0;
-}
-
-.calc-details p {
-  padding-left: 15px;
-}
-
-.credits h3 {
-  margin: 2px 0px;
-}
-
-</style>
-
-<!-- input related styling -->
-<style>
-
-input[type="number"], select {
-  border-color:lightgray;
-  border-radius: 5px;
-  padding: 1px;
-  text-align: center;
-}
-
-input[type="number"] {
-  width: 50px;
-}
-
-select {
-  text-align:center;
-}
-
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #f5f5f5;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  color: #333;
-  box-shadow: 0px 4px 4px 0px darkgray;
-  margin-bottom: 5px;
-  height: 110px;
-  vertical-align: center;
-}
-
-button:hover {
-  background-color: #ddd;
-}
-
-.calc-details {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-</style>
 
 <div class="container">
   <div class="target-details">
     <h3>Target Details</h3><hr color="dodgerblue">
-    <p><span>Level</span><input id="targetLevel" type="number" onchange="limitValue(this);" value="100" min="1" max="100"></p>
-    <p><span>Base HP Stat</span><input id="targetBaseHP" type="number" onchange="limitValue(this);" value="0" min="1" max="255"></p>
-    <p><span>HP IV's</span><input id="targetHPIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31"></p>
-    <p><span>Base Defense / Sp. Defense Stat</span><input id="targetBaseDef" type="number" onchange="limitValue(this);" value="0" min="1" max="255"></p>
-    <p><span>Defense / Sp. Defense IV's</span><input id="targetDefIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31"></p>
-    <p><span>Remaining EV's to Invest</span><input id="remainingEVs" type="number" onchange="limitValue(this);" value="4" min="4" max="504" step="4"></p>
-    <p><span>Nature</span>
-      <select id="targetNature" name="nature">
-        <option value="neutral" selected>Def. / Sp. Def. Neutral</option>
-        <option value="positive">Def. / Sp. Def. Positive</option>
-        <option value="negative">Def. / Sp. Def. Negative</option>
+
+    <p>
+      <span>Poke&#x301mon</span>
+      <select id="importTargetMenu" class="menu" onchange="importPokemon('importTargetMenu', [0, 2, 4], ['targetBaseHP', 'targetBaseDef', 'targetBaseSpDef'], ['targetType1', 'targetType2'])">
+        <option hidden selected value="(none)">(none)</option>
       </select>
+      <span class="loading">Loading...</span>
+    </p>
+
+    <p>
+      <span>Type</span>
+      <select id="targetType1">
+        <option selected hidden value="(none)">(none)</option>
+        <option value="bug">Bug</option>
+        <option value="dark">Dark</option>
+        <option value="dragon">Dragon</option>
+        <option value="electric">Electric</option>
+        <option value="fairy">Fairy</option>
+        <option value="fighting">Fighting</option>
+        <option value="fire">Fire</option>
+        <option value="flying">Flying</option>
+        <option value="ghost">Ghost</option>
+        <option value="grass">Grass</option>
+        <option value="ground">Ground</option>
+        <option value="ice">Ice</option>
+        <option value="normal">Normal</option>
+        <option value="poison">Poison</option>
+        <option value="psychic">Psychic</option>
+        <option value="rock">Rock</option>
+        <option value="steel">Steel</option>
+        <option value="water">Water</option>
+      </select>
+      <select id="targetType2">
+        <option selected hidden value="(none)">(none)</option>
+        <option value="bug">Bug</option>
+        <option value="dark">Dark</option>
+        <option value="dragon">Dragon</option>
+        <option value="electric">Electric</option>
+        <option value="fairy">Fairy</option>
+        <option value="fighting">Fighting</option>
+        <option value="fire">Fire</option>
+        <option value="flying">Flying</option>
+        <option value="ghost">Ghost</option>
+        <option value="grass">Grass</option>
+        <option value="ground">Ground</option>
+        <option value="ice">Ice</option>
+        <option value="normal">Normal</option>
+        <option value="poison">Poison</option>
+        <option value="psychic">Psychic</option>
+        <option value="rock">Rock</option>
+        <option value="steel">Steel</option>
+        <option value="water">Water</option>
+      </select>
+    </p>
+
+    <p>
+      <span>Level</span>
+      <input id="targetLevel" type="number" onchange="limitValue(this);" value="100" min="1" max="100">
+    </p>
+    
+    <p>
+      <span>Base HP /  IV's</span>
+      <input id="targetBaseHP" type="number" onchange="limitValue(this);" value="0" min="1" max="255">
+      <input id="targetHPIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31">
+    </p>
+    
+    <p>
+      <span>Base Defense / IV's</span>
+      <input id="targetBaseDef" type="number" onchange="limitValue(this);" value="0" min="1" max="255">
+      <input id="targetDefIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31">
+    </p>
+    
+    <p>
+      <span>Base Sp. Def / IV's</span>
+      <input id="targetBaseSpDef" type="number" onchange="limitValue(this);" value="0" min="1" max="255">
+      <input id="targetSpDefIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31">
+    </p>
+
+    <p>
+      <span>Nature</span>
+      <select id="targetNatureMenu" class="menu"></select>
+      <span class="loading">Loading...</span>
+    </p>
+
+    <p>
+      <span>Held Item</span>
+      <select id="targetItemMenu" class="menu">
+        <option value="(none)" selected>(none)</option>
+      </select>
+      <span class="loading">Loading...</span>
+    </p>
+
+    <p>
+      <span>Remaining EV's to Invest</span>
+      <input id="remainingEVs" type="number" onchange="limitValue(this);" value="4" min="4" max="504" step="4">
     </p>
   </div>
 
   <div class="attack-details">
     <h3>Attacker Details</h3><hr color="lightcoral">
-    <p><span>Level</span><input id="attackLevel" type="number" onchange="limitValue(this);" value="100" min="1" max="100"></p>
-    <p><span>Base Attack / Sp. Attack Stat</span><input id="attackBaseAtk" type="number" onchange="limitValue(this);" value="0" min="1" max="255"></p>
-    <p><span>Attack / Sp. Attack IV's</span><input id="attackAtkIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31"></p>
-    <p><span>Attack / Sp. Attack EV's</span><input id="attackAtkEV" type="number" onchange="limitValue(this);" value="252" min="0" max="252" step="4"></p>
-    <p><span>Nature</span>
-      <select id="attackNature" name="nature">
-        <option value="neutral" selected>Atk. / Sp. Atk. Neutral</option>
-        <option value="positive">Atk. / Sp. Atk. Positive</option>
-        <option value="negative">Atk. / Sp. Atk. Negative</option>
+
+    <p>
+      <span>Poke&#x301mon</span>
+      <select id="importAttackMenu" class="menu" onchange="importPokemon('importAttackMenu', [1, 3], ['attackBaseAtk', 'attackBaseSpAtk'], ['attackType1', 'attackType2'])">
+        <option hidden selected value="(none)">(none)</option>
+      </select>
+      <span class="loading">Loading...</span>
+    </p>
+
+
+    <p>
+      <span>Type</span>
+      <select id="attackType1">
+        <option hidden value="(none)">(none)</option>
+        <option value="bug">Bug</option>
+        <option value="dark">Dark</option>
+        <option value="dragon">Dragon</option>
+        <option value="electric">Electric</option>
+        <option value="fairy">Fairy</option>
+        <option value="fighting">Fighting</option>
+        <option value="fire">Fire</option>
+        <option value="flying">Flying</option>
+        <option value="ghost">Ghost</option>
+        <option value="grass">Grass</option>
+        <option value="ground">Ground</option>
+        <option value="ice">Ice</option>
+        <option value="normal">Normal</option>
+        <option value="poison">Poison</option>
+        <option value="psychic">Psychic</option>
+        <option value="rock">Rock</option>
+        <option value="steel">Steel</option>
+        <option value="water">Water</option>
+      </select>
+      <select id="attackType2">
+        <option selected hidden value="(none)">(none)</option>
+        <option value="bug">Bug</option>
+        <option value="dark">Dark</option>
+        <option value="dragon">Dragon</option>
+        <option value="electric">Electric</option>
+        <option value="fairy">Fairy</option>
+        <option value="fighting">Fighting</option>
+        <option value="fire">Fire</option>
+        <option value="flying">Flying</option>
+        <option value="ghost">Ghost</option>
+        <option value="grass">Grass</option>
+        <option value="ground">Ground</option>
+        <option value="ice">Ice</option>
+        <option value="normal">Normal</option>
+        <option value="poison">Poison</option>
+        <option value="psychic">Psychic</option>
+        <option value="rock">Rock</option>
+        <option value="steel">Steel</option>
+        <option value="water">Water</option>
       </select>
     </p>
+
+      <p>
+        <span>Level</span>
+        <input id="attackLevel" type="number" onchange="limitValue(this);" value="100" min="1" max="100">
+      </p>
+    
+    <p>
+      <span>Base Attack / IV's / EV's</span>
+      <input id="attackBaseAtk" type="number" onchange="limitValue(this);" value="0" min="1" max="255">
+      <input id="attackAtkIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31">
+      <input id="attackAtkEV" type="number" onchange="limitValue(this);" value="252" min="0" max="252" step="4">
+    </p>
+
+    <p>
+      <span>Base Sp. Attack / IV's / EV's</span>
+      <input id="attackBaseSpAtk" type="number" onchange="limitValue(this);" value="0" min="1" max="255">
+      <input id="attackSpAtkIV" type="number" onchange="limitValue(this);" value="31" min="0" max="31">
+      <input id="attackSpAtkEV" type="number" onchange="limitValue(this);" value="252" min="0" max="252" step="4">
+    </p>
+
+    <p>
+      <span>Nature</span>
+      <select id="attackNatureMenu" class="menu"></select>
+      <span class="loading">Loading...</span>
+    </p>
+
+    <p>
+      <span>Held Item</span>
+      <select id="attackItemMenu" class="menu">
+        <option value="(none)" selected>(none)</option>
+      </select>
+      <span class="loading">Loading...</span>
+    </p>
+
   </div>
 
   <div class="move-details">
     <h3>Move Details</h3><hr color="lime">
-    <p><span>Base Power</span><input id="movePower" type="number" onchange="limitValue(this);" value="0" min="0" max="65535"></p>
-    <p><span>STAB?</span><input id="STAB" type="checkbox" ></p>
-    <p><span>Type Effectiveness</span>
-      <select id="typeEffective" name="nature">
-        <option value="super">Super Effective Damage</option>
-        <option value="normal" selected>Neutral Damage</option>
-        <option value="weak">Not Very Effective Damage</option>
+
+    <p>
+      <span>Move</span>
+      <select id="importMoveMenu" class="menu" onchange="importMove(['attackType1', 'attackType2'], ['targetType1', 'targetType2'])">
+        <option hidden selected value="(none)">(none)</option>
+      </select>
+      <span class="loading">Loading...</span>
+    </p>
+
+    <p>
+    <span>Type</span>
+      <select id="moveType">
+        <option hidden value="(none)">(none)</option>
+        <option value="bug">Bug</option>
+        <option value="dark">Dark</option>
+        <option value="dragon">Dragon</option>
+        <option value="electric">Electric</option>
+        <option value="fairy">Fairy</option>
+        <option value="fighting">Fighting</option>
+        <option value="fire">Fire</option>
+        <option value="flying">Flying</option>
+        <option value="ghost">Ghost</option>
+        <option value="grass">Grass</option>
+        <option value="ground">Ground</option>
+        <option value="ice">Ice</option>
+        <option value="normal">Normal</option>
+        <option value="poison">Poison</option>
+        <option value="psychic">Psychic</option>
+        <option value="rock">Rock</option>
+        <option value="steel">Steel</option>
+        <option value="water">Water</option>
+      </select>
+
+      <select id="moveCategory">
+        <option selected hidden value="(none)">(none)</option>
+        <option value="physical">Physical</option>
+        <option value="special">Special</option>
       </select>
     </p>
-    <p><span>Other Multipliers (Items, Weather)</span><input id="otherMult" type="number" value="1" min="0" max="65535"></p>
+
+    <p>
+      <span>Base Power</span>
+      <input id="movePower" type="number" onchange="limitValue(this);" value="0" min="0" max="65535">
+    </p>
+
+    <p>
+      <span>STAB?</span>
+      <input id="STAB" type="checkbox">
+    </p>
+
+    <p>
+      <span>Type Effectiveness</span>
+      <select id="typeEffective" name="nature">
+        <option value="4">Super Effective (4x)</option>
+        <option value="2">Super Effective</option>
+        <option value="1" selected>Neutral</option>
+        <option value="0.5">Not Very Effective</option>
+        <option value="0.25">Not Very Effective (0.25x)</option>
+      </select>
+    </p>
+
+    <p>
+      <span>Other Multipliers (Items, Weather)
+        <button onclick="showModifiers()">?</button>
+      </span>
+      <input id="otherMult" type="number" value="1" min="0" max="65535">
+    </p>
+  </div>
+
+  <div class="modifier-details" style="display:none">
+    <h3>Modifier Details (Under Construction)</h3><hr color="blueviolet">
+
+    <!--
+    <p>
+      <span>Affected by weather?</span>
+      <select id="weatherEffect" name="nature">
+        <option value="super">Boosted By Weather</option>
+        <option value="normal" selected>No Effect By Weather</option>
+        <option value="weak">Weakened By Weather</option>
+      </select>
+    </p>
+
+    <p>
+      <span>Affected by weather?</span>
+      <input id="STAB" type="checkbox" >
+    </p>
+  -->
+
   </div>
 
   <div class="calc-details">
@@ -209,17 +300,16 @@ button:hover {
 
 <div class="container">
   <div class="info-details">
-    <h2>Optimal EV Spread Calculator</h2><hr>
+    <h2>Optimal EV Spread Calculator v1.2</h2><hr>
       <p>
         This calculator is made to optimize the damage taken from a <i>specific attack</i> from a <i>specific Poke&#x301mon</i>.<br><br>
-        For example, an attack from a Special Attacker will do more damage to you if you invest your remaining 72 EV's into HP,
+
+        For example, an attack from a Special Attacker will do more damage to you if you invest all of your remaining EV's into HP,
         than if you were to invest some of your EV's into Special Defense. <i>But how much should I invest to take the least damage?</i><br><br>
-        That is what this tool determines! Input the base stats, IV's, EV's and nature for both the target and attacker,
-        as well as the base power of the attack, and any other modifiers. The tool will determine the optimal HP-Defense split.<br><br>
-        (Note: Only take the necessary type of attack stat into account. If you're optimizing for a special move, use your special defense stat.)
-      
-      
-      
+
+        That is what this tool determines! Select the attacker, target, move, and any other modifiers. The tool will determine the optimal HP-Defense split.<br><br>
+
+        <i>(Note: The first time the webpage loads per device, it can take up to a few minutes to fetch all of the required data. After that, it should load faster.)</i>
       </p>
   </div>
 
@@ -227,8 +317,11 @@ button:hover {
     <h3>Credits</h3><hr>
       <p>
         <a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_V_onward">Damage formula</a> and <a target="_blank" href="https://bulbapedia.bulbagarden.net/wiki/Stat#Generation_III_onward">stat formula</a> obtained from Bulbapedia<br><br>
-        Created by <a target="_blank" href="https://twitter.com/thecarterjean">Carter Jean</a>
-        <img src="Trozeiani269.png" width="32" height="32" style="vertical-align: middle; padding-left:10px">
+
+        Poke&#x301mon and move stats obtained using the <a href="https://pokeapi.co/">Poke&#x301;API</a>.<br><br>
+
+        Created by <a target="_blank" href="https://twitter.com/thecarterjean">carterjean</a>
+        <img src="Trozeiani269.png" width="32" height="32" style="vertical-align: middle; padding-left:2px">
       </p>
   </div>
 </div>
