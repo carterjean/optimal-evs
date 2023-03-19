@@ -41,15 +41,15 @@
 
 .container {
     display: block;
-    float:left;
-    /*vertical-align: top;*/
-    margin: 0 auto;
+    flex:1;
 }
 
 .omegacontainer {
     margin: 0 auto;
-    display:block;
+    display:flex;
     width:50%;
+    justify-content: center; /* center elements horizontally */
+    align-items: center;
 }
 
 .info-details {
@@ -174,7 +174,7 @@ img[src] {
 
 #progressBar {
     height:15px;
-    width:98.5%;
+    width:442px;
     border:1px solid black;
     margin-top: 10px;
     margin-left:3px;
@@ -187,7 +187,21 @@ img[src] {
     height:15px;
 }
 
+.fade {
+    animation:fadeOut 0.5s linear;
+  }
+  
+  @keyframes fadeOut {
+    0% {
+      opacity:1
+    }
+    100% {
+      opacity:0;
+    }
+  }
+
+
 body {
     background: url("background.jpg") no-repeat;
-    background-size:cover;
+    background-size:100%100%;
 }

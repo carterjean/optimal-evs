@@ -373,29 +373,32 @@ window.onload = async function()
 
     for (i = 1; i < totalItems+1; i++)
     {
-        try {
-            data = await getData("item",  i.toString());
-
-            if (itemViable(data["category"]["name"]))
-            {
-                option = new Option();
-                option.value = data["name"];
-                //console.log(option.value, data["category"]["name"]);
-
-                for (j = 0; j < data["names"].length; j++)
-                {
-                    if (data["names"][j]["language"]["name"] === "en")
-                    {
-                        option.text = data["names"][j]["name"];
-                        break;
-                    }
-                }
-                targetItemMenu.add(option);
-            }
-        } 
-        catch (error)
+        if (![667, 672, 680].includes(i))
         {
-            //console.log("error finding item")
+            try {
+                data = await getData("item",  i.toString());
+
+                if (itemViable(data["category"]["name"]))
+                {
+                    option = new Option();
+                    option.value = data["name"];
+                    //console.log(option.value, data["category"]["name"]);
+
+                    for (j = 0; j < data["names"].length; j++)
+                    {
+                        if (data["names"][j]["language"]["name"] === "en")
+                        {
+                            option.text = data["names"][j]["name"];
+                            break;
+                        }
+                    }
+                    targetItemMenu.add(option);
+                }
+            } 
+            catch (error)
+            {
+                //console.log("error finding item")
+            }
         }
 
         updateProgress(totalPokemon + totalMoves + totalNatures + i);
@@ -408,7 +411,11 @@ window.onload = async function()
         document.getElementsByClassName("loading")[i].style.display = "none";
         document.getElementsByClassName("menu")[i].style.display = "block";
     }
-    document.getElementById("progressBar").style.display = "none";
+    document.getElementById("progressBar").classList.add("fade");
+
+    setTimeout(function() {
+        document.getElementById("progressBar").style.visibility = "hidden";
+    }, 500);
 
     loaded = true;
 }
