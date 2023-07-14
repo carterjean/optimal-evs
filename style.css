@@ -155,14 +155,6 @@ button:hover {
     height: 130px;
 }
 
-.menu {
-    display:none;
-}
-
-.loading {
-    text-align: right;
-}
-
 img {
     vertical-align:middle;
     visibility: hidden;
@@ -171,35 +163,6 @@ img {
 img[src] {
     visibility: visible;
 }
-
-#progressBar {
-    height:15px;
-    width:442px;
-    border:1px solid black;
-    margin-top: 10px;
-    margin-left:3px;
-}
-
-#progress {
-    background-color: limegreen;
-    width: 1%;
-    display:block;
-    height:15px;
-}
-
-.fade {
-    animation:fadeOut 0.5s linear;
-  }
-  
-  @keyframes fadeOut {
-    0% {
-      opacity:1
-    }
-    100% {
-      opacity:0;
-    }
-  }
-
 
 body {
     background: url("background.jpg") no-repeat;

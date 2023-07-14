@@ -13,3 +13,8 @@ v1.2:
 - Added proper credits for the PokeAPI.
 - Adjust some visuals.
 - Squashed some bugs.
+
+v1.3
+- NEW method for importing means that it doesn't take a bikdjslkfsillion hours to load.
+- Introduced Mega Evolutions and Primal Evolutions into the drop-down menus.
+- Item functionality is coming soon! ( Making a full damage calculator is hard :< )

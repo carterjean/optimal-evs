@@ -2,7 +2,43 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Happy%20Monkey">
   <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
   <link rel="stylesheet" href="style.css">
+
+  <script src="pokemon_list.js"></script>
+  <script src="pokemon_stats.js"></script>
+  <script src="pokemon_types.js"></script>
+
+  <script src="move_list.js"></script>
+  <script src="move_stats.js"></script>
+
+  <script src="damage_relations.js"></script>
+
+  <script src="nature_list.js"></script>
+  <script src="nature_stats.js"></script>
+  
+  <script src="item_list.js"></script>
+
+  <script src="data-management.js"></script>
+  <script src="calculation.js"></script>
   <script src="sketch.js"></script>
+
+  <script>
+    // function for adjusting the input fields
+    function limitValue(input)
+      {
+      const minValue = parseInt(input.min);
+      const roundedValue = Math.round(input.value);
+      const newValue = roundedValue < minValue ? minValue : roundedValue;
+      input.value = newValue;
+    }
+
+    // function for displaying the modifiers tab
+    function showModifiers()
+    {
+      mods = document.getElementsByClassName("modifier-details")[0];
+      mods.style.display = (mods.style.display == "none" ? "block" : "none");
+    }
+  </script>
+
   <title>carterjean's Optimal EV Spread Calculator</title>
 </head>
 
@@ -14,9 +50,8 @@
     <p>
       <span>Poke&#x301mon</span>
       <select id="importTargetMenu" class="menu" onchange="importPokemon('importTargetMenu', [0, 2, 4], ['targetBaseHP', 'targetBaseDef', 'targetBaseSpDef'], ['targetType1', 'targetType2'])">
-        <option hidden selected value="(none)">(none)</option>
+        <option selected value="(none)">(none)</option>
       </select>
-      <span class="loading">Loading...</span>
     </p>
 
     <p>
@@ -91,7 +126,6 @@
     <p>
       <span>Nature</span>
       <select id="targetNatureMenu" class="menu"></select>
-      <span class="loading">Loading...</span>
     </p>
 
     <p>
@@ -99,7 +133,6 @@
       <select id="targetItemMenu" class="menu">
         <option value="(none)" selected>(none)</option>
       </select>
-      <span class="loading">Loading...</span>
     </p>
 
     <p>
@@ -116,7 +149,6 @@
       <select id="importAttackMenu" class="menu" onchange="importPokemon('importAttackMenu', [1, 3], ['attackBaseAtk', 'attackBaseSpAtk'], ['attackType1', 'attackType2'])">
         <option hidden selected value="(none)">(none)</option>
       </select>
-      <span class="loading">Loading...</span>
     </p>
 
 
@@ -188,7 +220,6 @@
     <p>
       <span>Nature</span>
       <select id="attackNatureMenu" class="menu"></select>
-      <span class="loading">Loading...</span>
     </p>
 
     <p>
@@ -196,7 +227,6 @@
       <select id="attackItemMenu" class="menu">
         <option value="(none)" selected>(none)</option>
       </select>
-      <span class="loading">Loading...</span>
     </p>
 
   </div>
@@ -209,7 +239,6 @@
       <select id="importMoveMenu" class="menu" onchange="importMove(['attackType1', 'attackType2'], ['targetType1', 'targetType2'])">
         <option hidden selected value="(none)">(none)</option>
       </select>
-      <span class="loading">Loading...</span>
     </p>
 
     <p>
@@ -294,23 +323,21 @@
   </div>
 
   <div class="calc-details">
-    <button class="calc" onclick="if(loaded) {CalcLowest()}"><b>Calculate</b></button><br>
+    <button class="calc" onclick="CalcLowest()"><b>Calculate</b></button><br>
     <p style="visibility:hidden" id="result">Make sure all of the values are filled out correctly!</p>
   </div>
 </div>
 
 <div class="container">
   <div class="info-details">
-    <h2>Optimal EV Spread Calculator v1.2</h2><hr>
+    <h2>Optimal EV Spread Calculator v1.3</h2><hr>
       <p>
         This calculator is made to optimize the damage taken from a <i>specific attack</i> from a <i>specific Poke&#x301mon</i>.<br><br>
 
         For example, an attack will do less damage to you if split your remaining EV's into HP and Defense,
         instead of your just HP. <i>But how much should I invest to take the least damage?</i><br><br>
 
-        That is what this tool determines! Select the attacker, target (including how many EV's you need to invest), move, and any other modifiers. The tool will determine the optimal HP-Defense split.<br><br>
-
-        <i>(Note: The first time the webpage loads per device, it can take up to a few minutes to fetch all of the required data. After that, it should load significantly faster.)</i>
+        That is what this tool determines! Select the attacker, target (including how many EV's you need to invest), move, and any other modifiers. The tool will determine the optimal HP-Defense split.
       </p>
   </div>
 
@@ -324,10 +351,6 @@
         Created by <a target="_blank" href="https://twitter.com/thecarterjean">carterjean</a>
         <img src="Trozeiani269.png" width="32" height="32" style="vertical-align: middle; padding-left:2px">
       </p>
-  </div>
-
-  <div id="progressBar">
-    <div id="progress"></div>
   </div>
 </div>
 </div>
